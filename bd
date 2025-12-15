@@ -1,0 +1,37 @@
+-- Tabla de usuarios
+CREATE TABLE usuarios (
+    correo VARCHAR(255) PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    rol ENUM('usuario','administrador') NOT NULL,
+    contrasena VARCHAR(255) NOT NULL -- Hash de la contraseña
+);
+
+-- Tabla de proyectos
+CREATE TABLE proyectos (
+    id_proyecto INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    descripcion TEXT
+);
+
+-- Tabla de fichajes
+CREATE TABLE fichajes (
+    id_fichaje INT AUTO_INCREMENT PRIMARY KEY,
+    correo_usuario VARCHAR(255) NOT NULL,
+    id_proyecto INT NOT NULL,
+    horas DECIMAL(5,2) NOT NULL, -- 3.5 h, 10.25 h, etc.
+    fecha DATE NOT NULL DEFAULT CURRENT_DATE,
+    FOREIGN KEY (correo_usuario) REFERENCES usuarios(correo) ON DELETE CASCADE,
+    FOREIGN KEY (id_proyecto) REFERENCES proyectos(id_proyecto) ON DELETE CASCADE
+);
+-- Usuarios
+INSERT INTO usuarios (correo, nombre, rol, contrasena)
+VALUES ('usuario@empresa.es', 'Juan Pérez', 'usuario', 'hashedpassword');
+
+-- Proyectos
+INSERT INTO proyectos (nombre, descripcion)
+VALUES ('Proyecto 1', 'Proyecto de desarrollo interno'),
+       ('Proyecto 2', 'Proyecto cliente ABC');
+
+-- Fichajes
+INSERT INTO fichajes (correo_usuario, id_proyecto, horas)
+VALUES ('usuario@empresa.es', 2, 3);
