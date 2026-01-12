@@ -25,7 +25,7 @@ CREATE TABLE fichajes (
 );
 -- Usuarios
 INSERT INTO usuarios (correo, nombre, rol, contrasena)
-VALUES ('usuario@empresa.es', 'Juan Pérez', 'usuario', 'hashedpassword');
+VALUES ('usuario@empresa.es', 'Juan Pérez', 'usuario', '1234');
 
 -- Proyectos
 INSERT INTO proyectos (nombre, descripcion)
@@ -39,10 +39,10 @@ VALUES ('usuario@empresa.es', 2, 3);
 
 -- Usuarios
 INSERT INTO usuarios (correo, nombre, rol, contrasena) VALUES
-('ana@empresa.es', 'Ana Gómez', 'usuario', 'hashedpassword1'),
-('luis@empresa.es', 'Luis Martínez', 'usuario', 'hashedpassword2'),
-('maria@empresa.es', 'María López', 'administrador', 'hashedpassword3'),
-('carlos@empresa.es', 'Carlos Sánchez', 'usuario', 'hashedpassword4');
+('ana@empresa.es', 'Ana Gómez', 'usuario', '1234'),
+('luis@empresa.es', 'Luis Martínez', 'usuario', '1234'),
+('maria@empresa.es', 'María López', 'administrador', '1234'),
+('carlos@empresa.es', 'Carlos Sánchez', 'usuario', '1234');
 
 -- Proyectos
 INSERT INTO proyectos (nombre, descripcion) VALUES
