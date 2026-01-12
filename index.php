@@ -1,7 +1,8 @@
 <?php
+// 1. Iniciar la sesión siempre al principio del archivo
+session_start();
 
-// CONEXIÓN A LA BD
-
+// 2. CONEXIÓN A LA BD
 $host = "localhost";
 $usuario = "root";
 $password = "";
@@ -18,31 +19,28 @@ try {
     die("Error de conexión: " . $e->getMessage());
 }
 
-
-// LOGIN
-
+// 3. LÓGICA DE LOGIN
 $mensaje = "";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $correo = $_POST["correo"];
     $contrasena = $_POST["password"];
 
-    $stmt = $conexion->prepare(
-        "SELECT * FROM usuarios WHERE correo = :correo"
-    );
+    $stmt = $conexion->prepare("SELECT * FROM usuarios WHERE correo = :correo");
     $stmt->bindParam(":correo", $correo);
     $stmt->execute();
 
     $usuarioBD = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // 👉 Para prácticas SIN hash cambia por: $contrasena === $usuarioBD["contrasena"]
-    if ($usuarioBD && password_verify($contrasena, $usuarioBD["contrasena"])) {
+    // Verificamos si el usuario existe Y si la contraseña coincide en texto plano
+    if ($usuarioBD && $contrasena === $usuarioBD["contrasena"]) {
 
-        session_start();
+        // Guardamos datos en la sesión
         $_SESSION["correo"] = $usuarioBD["correo"];
         $_SESSION["nombre"] = $usuarioBD["nombre"];
         $_SESSION["rol"] = $usuarioBD["rol"];
 
+        // Redirección según rol
         if ($usuarioBD["rol"] === "administrador") {
             header("Location: admin.php");
         } else {
@@ -76,7 +74,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <h2 class="login__title">Iniciar sesión</h2>
 
         <?php if ($mensaje): ?>
-            <p class="login__message"><?= $mensaje ?></p>
+            <p class="login__message" style="color: red; text-align: center;"><?= $mensaje ?></p>
         <?php endif; ?>
 
         <form method="POST" class="login__form">
