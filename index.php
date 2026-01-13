@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-require_once "./bd/conexionbd.php";
+require_once "./basedatos/conexionbd.php";
 
 $mensaje = "";
 
