@@ -1,25 +1,8 @@
 <?php
-// 1. Iniciar la sesión siempre al principio del archivo
 session_start();
 
-// 2. CONEXIÓN A LA BD
-$host = "localhost";
-$usuario = "root";
-$password = "";
-$bd = "AppFichajes";
+require_once "./bd/conexionbd.php";
 
-try {
-    $conexion = new PDO(
-        "mysql:host=$host;dbname=$bd;charset=utf8mb4",
-        $usuario,
-        $password
-    );
-    $conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Error de conexión: " . $e->getMessage());
-}
-
-// 3. LÓGICA DE LOGIN
 $mensaje = "";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -32,23 +15,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $usuarioBD = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Verificamos si el usuario existe Y si la contraseña coincide en texto plano
     if ($usuarioBD && $contrasena === $usuarioBD["contrasena"]) {
 
-        // Guardamos datos en la sesión
         $_SESSION["correo"] = $usuarioBD["correo"];
         $_SESSION["nombre"] = $usuarioBD["nombre"];
         $_SESSION["rol"] = $usuarioBD["rol"];
 
-        // Redirección según rol
         if ($usuarioBD["rol"] === "administrador") {
             header("Location: admin.php");
         } else {
-            header("Location: usuario.php");
+            header("Location: pages/usuario.php");
         }
         exit;
     } else {
-        $mensaje = "❌ Correo o contraseña incorrectos";
+        $mensaje = "Contraseña erronea";
     }
 }
 ?>
@@ -65,7 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <body>
 
 <header class="header">
-    <h1>📌 Aplicación de Fichajes</h1>
+    <h1>Aplicación de Fichajes</h1>
     <p>Control de horas trabajadas</p>
 </header>
 
@@ -73,9 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <section class="login">
         <h2 class="login__title">Iniciar sesión</h2>
 
-        <?php if ($mensaje): ?>
-            <p class="login__message" style="color: red; text-align: center;"><?= $mensaje ?></p>
-        <?php endif; ?>
+        <?php if (!empty($mensaje)) echo "<p class='login__message' style='color:red;'>$mensaje</p>"; ?>
 
         <form method="POST" class="login__form">
             <label class="login__label">Correo:</label>
