@@ -58,3 +58,107 @@
       color: #7f8c8d;
       text-decoration: none;
   }
+ 
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7f6;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+/* Header */
+.header {
+    text-align: center;
+    padding: 20px 0;
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+}
+
+.header h1 {
+    margin: 0;
+    color: #2c3e50;
+}
+
+.login {
+    max-width: 450px;
+    margin: 50px auto;
+    text-align: center;
+    padding: 30px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.login__title {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #2c3e50;
+}
+
+/* Mensajes de error */
+.login__message {
+    background: #fdf2f2;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #f8b4b4;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+/* Formulario e Inputs */
+.login__form {
+    text-align: left;
+}
+
+.login__label {
+    display: block;
+    text-align: left;
+    font-weight: bold;
+    color: #333;
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+.login__input {
+    padding: 12px;
+    width: 100%;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    box-sizing: border-box; 
+}
+
+.login__input:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+}
+
+
+.login__button {
+    padding: 15px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    width: 100%;
+    margin-top: 25px;
+    font-weight: bold;
+    background-color: #2ecc71; 
+    transition: background-color 0.3s ease;
+}
+
+.login__button:hover {
+    background-color: #27ae60;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    margin-top: 20px;
+    color: #7f8c8d;
+    font-size: 14px;
+}
