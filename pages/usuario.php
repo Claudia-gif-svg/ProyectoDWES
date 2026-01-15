@@ -9,12 +9,9 @@ if (!isset($_SESSION["correo"])) {
 
 require_once "../basedatos/conexionbd.php";
 
+$stmt = $conexion->query("SELECT id_proyecto, nombre FROM proyectos");
+$proyectos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-$proyectos = [];
-if (!isset($_SESSION['inicio_jornada'])) {
-    $stmt = $conexion->query("SELECT id_proyecto, nombre FROM proyectos");
-    $proyectos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
 
 $mensaje = "";
 $fichaje_activo = isset($_SESSION['inicio_jornada']);
