@@ -95,7 +95,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['accion'])) {
         <?php endif; ?>
     </form>
 
-    <a href="logout.php" class="logout">Cerrar sesión</a>
+    <?php
+if (!$fichaje_activo) {
+    echo '<a href="../logout.php" class="logout">Cerrar sesión</a>';
+} else {
+    echo '<p class="logout-disabled" style="color: gray; margin-top: 10px;">⚠️ Termina tu fichaje antes de cerrar sesión</p>';
+}
+?>
+
 </div>
 
 </body>
