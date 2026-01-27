@@ -7,6 +7,12 @@
       border-radius: 12px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
+.mensaje {
+  color: #155724;
+  background: #d4edda;
+  padding: 10px;
+  border-radius: 5px;
+}
 
   .btn {
       padding: 15px;
@@ -161,4 +167,8 @@ body {
     margin-top: 20px;
     color: #7f8c8d;
     font-size: 14px;
+}
+.title{
+  margin: 0 auto;
+    color: #2c3e50;
 }
