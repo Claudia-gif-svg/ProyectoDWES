@@ -22,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $_SESSION["rol"] = $usuarioBD["rol"];
 
         if ($usuarioBD["rol"] === "administrador") {
-            header("Location: admin.php");
+            header("Location: pages/admin.php");
         } else {
             header("Location: pages/usuario.php");
         }
