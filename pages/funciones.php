@@ -31,4 +31,73 @@ function calcularHorasTrabajadas($inicio) {
     $segundos = time() - $inicio;
     return max(0.01, round($segundos / 3600, 2));
 }
+
+function escribirLog($mensaje, $tipo = "INFO") {
+    $archivo = __DIR__ . '/../logs/app.log'; // Ajusta ruta según ubicación del archivo
+    $fecha = date('[Y-m-d H:i:s]');
+    $texto = "$fecha [$tipo] $mensaje" . PHP_EOL;
+    file_put_contents($archivo, $texto, FILE_APPEND);
+}
+
+
+function imprimirUsuarios($conexion) {
+    $sql = "SELECT correo, nombre, rol FROM usuarios";
+    $stmt = $conexion->prepare($sql);
+    $stmt->execute();
+
+    $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    echo "<h2>Usuarios</h2>";
+    echo "<table border='1' cellpadding='5'>
+            <tr>
+                <th>Correo</th>
+                <th>Nombre</th>
+                <th>Rol</th>
+            </tr>";
+
+    if (count($usuarios) > 0) {
+        foreach ($usuarios as $fila) {
+            echo "<tr>
+                    <td>{$fila['correo']}</td>
+                    <td>{$fila['nombre']}</td>
+                    <td>{$fila['rol']}</td>
+                  </tr>";
+        }
+    } else {
+        echo "<tr><td colspan='3'>No hay usuarios</td></tr>";
+    }
+
+    echo "</table>";
+}
+
+function imprimirProyectos($conexion) {
+    $sql = "SELECT id_proyecto, nombre, descripcion FROM proyectos";
+    $stmt = $conexion->prepare($sql);
+    $stmt->execute();
+
+    $proyectos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    echo "<h2>Proyectos</h2>";
+    echo "<table border='1' cellpadding='5'>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+            </tr>";
+
+    if (count($proyectos) > 0) {
+        foreach ($proyectos as $fila) {
+            echo "<tr>
+                    <td>{$fila['id_proyecto']}</td>
+                    <td>{$fila['nombre']}</td>
+                    <td>{$fila['descripcion']}</td>
+                  </tr>";
+        }
+    } else {
+        echo "<tr><td colspan='3'>No hay proyectos</td></tr>";
+    }
+
+    echo "</table>";
+}
+
 ?>
