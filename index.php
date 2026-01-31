@@ -2,6 +2,8 @@
 session_start();
 
 require_once "./basedatos/conexionbd.php";
+require_once "./pages/funciones.php"; 
+
 
 $mensaje = "";
 
@@ -15,21 +17,28 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $usuarioBD = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($usuarioBD && $contrasena === $usuarioBD["contrasena"]) {
+   if ($usuarioBD && $contrasena === $usuarioBD["contrasena"]) {
+    
+    // Guardar log de inicio de sesión exitoso
+    escribirLog("Usuario {$correo} inició sesión correctamente", "INFO");
 
-        $_SESSION["correo"] = $usuarioBD["correo"];
-        $_SESSION["nombre"] = $usuarioBD["nombre"];
-        $_SESSION["rol"] = $usuarioBD["rol"];
+    $_SESSION["correo"] = $usuarioBD["correo"];
+    $_SESSION["nombre"] = $usuarioBD["nombre"];
+    $_SESSION["rol"] = $usuarioBD["rol"];
 
-        if ($usuarioBD["rol"] === "administrador") {
-            header("Location: pages/admin.php");
-        } else {
-            header("Location: pages/usuario.php");
-        }
-        exit;
+    if ($usuarioBD["rol"] === "administrador") {
+        header("Location: pages/admin.php");
     } else {
-        $mensaje = "Contraseña erronea";
+        header("Location: pages/usuario.php");
     }
+    exit;
+} else {
+    // Guardar log de intento fallido
+    escribirLog("Intento fallido de inicio de sesión con {$correo}", "ERROR");
+
+    $mensaje = "Contraseña erronea";
+}
+
 }
 ?>
 
