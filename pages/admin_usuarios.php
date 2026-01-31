@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// Solo administradores
 if (!isset($_SESSION["correo"]) || $_SESSION["rol"] !== "administrador") {
     header("Location: ../index.php");
     exit;
@@ -10,7 +9,24 @@ if (!isset($_SESSION["correo"]) || $_SESSION["rol"] !== "administrador") {
 require_once "../basedatos/conexionbd.php";
 require_once "funciones.php";
 
-$accion = $_GET['accion'] ?? 'crear';
+$mensaje = "";
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $accion_post = $_POST['accion'] ?? '';
+    
+    if ($accion_post === 'crear') {
+
+        $mensaje = crearRegistro($conexion, 'usuario', $_POST);
+    } elseif ($accion_post === 'modificar') {
+        $mensaje = modificarRegistro($conexion, 'usuario', $_POST);
+    } elseif ($accion_post === 'eliminar') {
+        $mensaje = eliminarRegistro($conexion, 'usuario', $_POST['correo']);
+    }
+}
+
+$accion = $_GET['accion'] ?? '';
+
+$stmt = $conexion->query("SELECT correo, nombre FROM usuarios");
+$usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -29,39 +45,47 @@ $accion = $_GET['accion'] ?? 'crear';
 
 <div class="panel">
 
-    <!-- Botones de acción -->
+    <?php if ($mensaje): ?>
+        <?php 
+            $clase = "alerta--exito"; 
+            if (str_contains($mensaje, 'Error')) {
+                $clase = "alerta--error";
+            }
+        ?>
+        <div class="alerta <?php echo $clase; ?>">
+            <?php echo $mensaje; ?>
+        </div>
+    <?php endif; ?>
+
     <nav class="panel__nav">
-        <a href="?accion=crear" class="menu__button menu__crear">
+        <a href="?accion=crear" class="menu__button menu__crear <?= $accion === 'crear' ? 'active' : '' ?>">
             <i class="fa-solid fa-user-plus"></i> Crear
         </a>
-        <a href="?accion=modificar" class="menu__button menu__modificar">
+        <a href="?accion=modificar" class="menu__button menu__modificar <?= $accion === 'modificar' ? 'active' : '' ?>">
             <i class="fa-solid fa-user-pen"></i> Modificar
         </a>
-        <a href="?accion=eliminar" class="menu__button menu__eliminar">
+        <a href="?accion=eliminar" class="menu__button menu__eliminar <?= $accion === 'eliminar' ? 'active' : '' ?>">
             <i class="fa-solid fa-user-minus"></i> Eliminar
         </a>
     </nav>
-<?php
-// Cargar usuarios desde la base de datos
-$stmt = $conexion->query("SELECT correo, nombre FROM usuarios");
-$usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
-?>
+
+    ---
+
     <?php if ($accion === 'crear'): ?>
         <h3 class="panel__subtitle">Crear Usuario</h3>
-        <form method="POST" action="admin_acciones.php" class="form form__usuario">
-            <input type="hidden" name="tipo" value="usuario">
+        <form method="POST" action="<?= $_SERVER['PHP_SELF'] ?>" class="form form__usuario">
             <input type="hidden" name="accion" value="crear">
 
-            <label for="nombre">Nombre:</label>
+            <label>Nombre:</label>
             <input type="text" name="nombre" class="form__input" required>
 
-            <label for="correo">Correo:</label>
+            <label>Correo:</label>
             <input type="email" name="correo" class="form__input" required>
 
-            <label for="contraseña">Contraseña:</label>
-            <input type="password" name="contraseña" class="form__input" required>
+            <label>Contraseña:</label>
+            <input type="password" name="contrasena" class="form__input" required>
 
-            <label for="rol">Rol:</label>
+            <label>Rol:</label>
             <select name="rol" class="form__input" required>
                 <option value="usuario">Usuario</option>
                 <option value="administrador">Administrador</option>
@@ -74,24 +98,21 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <?php elseif ($accion === 'modificar'): ?>
         <h3 class="panel__subtitle">Modificar Usuario</h3>
-        <form method="POST" action="admin_acciones.php" class="form form__usuario">
-            <input type="hidden" name="tipo" value="usuario">
+        <form method="POST" action="<?= $_SERVER['PHP_SELF'] ?>" class="form form__usuario">
             <input type="hidden" name="accion" value="modificar">
 
-            <label for="correo">Selecciona Usuario:</label>
+            <label>Selecciona Usuario:</label>
             <select name="correo" class="form__input" required>
-                <?php
-               
-                foreach ($usuarios as $u) {
-                    echo "<option value='{$u['correo']}'>{$u['nombre']} ({$u['correo']})</option>";
-                }
-                ?>
+                <option value="">-- Seleccionar --</option>
+                <?php foreach ($usuarios as $u): ?>
+                    <option value="<?= $u['correo'] ?>"><?= htmlspecialchars($u['nombre']) ?> (<?= $u['correo'] ?>)</option>
+                <?php endforeach; ?>
             </select>
 
-            <label for="nombre">Nuevo Nombre:</label>
+            <label>Nuevo Nombre (opcional):</label>
             <input type="text" name="nombre" class="form__input">
 
-            <label for="rol">Nuevo Rol:</label>
+            <label>Nuevo Rol:</label>
             <select name="rol" class="form__input">
                 <option value="">-- Mantener actual --</option>
                 <option value="usuario">Usuario</option>
@@ -99,32 +120,34 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </select>
 
             <button type="submit" class="form__button">
-                <i class="fa-solid fa-user-pen"></i> Modificar Usuario
+                <i class="fa-solid fa-user-pen"></i> Actualizar Usuario
             </button>
         </form>
 
     <?php elseif ($accion === 'eliminar'): ?>
         <h3 class="panel__subtitle">Eliminar Usuario</h3>
-        <form method="POST" action="admin_acciones.php" class="form form__usuario">
-            <input type="hidden" name="tipo" value="usuario">
+        <form method="POST" action="<?= $_SERVER['PHP_SELF'] ?>" class="form form__usuario">
             <input type="hidden" name="accion" value="eliminar">
 
-            <label for="correo">Selecciona Usuario:</label>
+            <label>Selecciona Usuario:</label>
             <select name="correo" class="form__input" required>
-                <?php
-                foreach ($usuarios as $u) {
-                    echo "<option value='{$u['correo']}'>{$u['nombre']} ({$u['correo']})</option>";
-                }
-                ?>
+                <option value="">-- Seleccionar --</option>
+                <?php foreach ($usuarios as $u): ?>
+                    <option value="<?= $u['correo'] ?>"><?= htmlspecialchars($u['nombre']) ?> (<?= $u['correo'] ?>)</option>
+                <?php endforeach; ?>
             </select>
 
-            <button type="submit" class="form__button">
-                <i class="fa-solid fa-user-minus"></i> Eliminar Usuario
+            <button type="submit" class="form__button btn-danger" onclick="return confirm('¿Borrar este usuario?')">
+                <i class="fa-solid fa-user-minus"></i> Eliminar Definitivamente
             </button>
         </form>
     <?php endif; ?>
 
-    <!-- Tabla de usuarios -->
+    <a href="admin.php" class="form__button volver__button">
+        <i class="fa-solid fa-arrow-left"></i> Volver al Panel
+    </a>
+
+    <hr>
     <h3 class="panel__subtitle">Usuarios Actuales</h3>
     <?php imprimirUsuarios($conexion); ?>
 
